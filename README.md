@@ -1,6 +1,6 @@
 # Sonic Dream Team Controller
 
-*Built with generous amounts of AI-generated slop*
+*Built with generous amounts of AI-generated slop.*
 
 A small macOS menu bar app that makes a tested Xbox-style 2.4 GHz USB controller
 usable with **Sonic Dream Team** by translating controller input into keyboard
@@ -54,8 +54,8 @@ Install [Homebrew](https://brew.sh/) if needed, then the dependencies:
 
 ```sh
 brew install libusb pkgconf
-git clone https://github.com/filiprrs/sonic-dream-team-controller-macos.git
-cd sonic-dream-team-controller-macos
+git clone https://github.com/filiprrs/sonic-dream-team-controller-macos-aislop.git
+cd sonic-dream-team-controller-macos-aislop
 make
 make test
 ```
