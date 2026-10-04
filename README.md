@@ -112,10 +112,11 @@ LB, RB, L3, and LT are configurable convenience bindings; their gameplay effects
 have not been confirmed. A is intentionally mapped to `↑`, not Space. The D-pad
 does not emit arrow keys.
 
-When the pointer is enabled, A sends Enter and B sends Escape; B also switches
-the pointer off. Press View when the game opens a menu by itself, for example
-after finishing a level. Press View again to return to normal gameplay bindings.
-RT clicks the pointed item. The cursor overlay does not intercept clicks.
+Showing the pointer does not change any button bindings: A still sends the
+configured jump key, B still sends its configured action, and RT clicks the
+pointed item. Press View when the game opens a menu by itself, for example after
+finishing a level. Press View again to hide the pointer. The cursor overlay does
+not intercept clicks.
 
 Camera / pointer sensitivity is **shared** between gameplay and menus:
 Slow (350), Normal (900, default), or Fast (1600 pixels/second at full deflection).

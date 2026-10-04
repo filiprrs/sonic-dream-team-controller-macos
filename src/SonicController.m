@@ -90,12 +90,7 @@ static void mapState(unsigned buttons,int x,int y,int lt,int rt,bool keys[128],b
   keys[0]=x< -8000;keys[2]=x>8000;keys[13]=y>8000;keys[1]=y< -8000;
   unsigned masks[]={0x10,0x20,0x40,0x80,0x1000,0x2000,0x4000,0x8000,0x08,0x04};
   for(int i=0;i<10;i++) {
-    if(atomic_load(&navigationMode)&&i<2)continue;
     bindAction(i,(buttons&masks[i])!=0,keys,mouse);
-  }
-  if(atomic_load(&navigationMode)) {
-    if(buttons&0x10)keys[36]=true;
-    if(buttons&0x20)keys[53]=true;
   }
   bindAction(10,lt>256,keys,mouse);bindAction(11,rt>256,keys,mouse);
 }
@@ -148,7 +143,6 @@ static void *readController(void *unused) {
           if(entering){CGRect r=CGDisplayBounds(CGMainDisplayID());CGWarpMouseCursorPosition(CGPointMake(CGRectGetMidX(r),CGRectGetMidY(r)));}
         }
         bool keys[128]={0},mouse[3]={0};mapState(buttons,x,y,lt,rt,keys,mouse);applyOutput(keys,mouse);moveMouse(rx,ry,dt);
-        if((pressed&0x20)&&atomic_load(&navigationMode))atomic_store(&navigationMode,false);
       }else releaseKeys();
       previousButtons=buttons;
     }
@@ -273,7 +267,8 @@ int main(int argc,const char *argv[]) {
     memset(keys,0,sizeof keys);mapState(0x400,-20000,-20000,1000,1000,keys,mouse);assert(keys[0]&&keys[1]&&!keys[123]&&!keys[56]&&mouse[0]&&mouse[1]);
     memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x20|0x04|0x08,0,0,0,0,keys,mouse);assert(keys[14]&&keys[53]&&!keys[36]&&!keys[56]);
     memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x80|0x8000,0,0,0,0,keys,mouse);assert(keys[6]&&mouse[2]);
-    atomic_store(&navigationMode,true);memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x10|0x20,0,0,0,0,keys,mouse);assert(keys[36]&&keys[53]&&!keys[126]&&!keys[49]&&!keys[14]);atomic_store(&navigationMode,false);
+    atomic_store(&navigationMode,true);memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x10|0x20,0,0,0,0,keys,mouse);assert(keys[126]&&keys[14]&&!keys[36]&&!keys[53]&&!keys[49]);
+    atomic_store(&action[0],49);memset(keys,0,sizeof keys);mapState(0x10,0,0,0,0,keys,mouse);assert(keys[49]&&!keys[36]&&!keys[126]);atomic_store(&action[0],126);atomic_store(&navigationMode,false);
     memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x100|0x200|0x400|0x800,0,0,0,0,keys,mouse);
     for(int i=0;i<128;i++)assert(!keys[i]);for(int i=0;i<3;i++)assert(!mouse[i]);
     puts("PASS: WASD, A up-arrow jump, dash, disabled D-pad, triggers, menu controls and camera axes");return 0;
