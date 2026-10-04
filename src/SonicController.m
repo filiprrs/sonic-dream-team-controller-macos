@@ -43,7 +43,7 @@ static CGPoint clampPointer(CGPoint p) {
   return closest;
 }
 // A, B, X, Y, LB, RB, L3, R3, View, Menu, LT, RT; -2/-3/-4 = mouse, -5 = pointer.
-static const int defaultActions[12]={126,14,56,6,59,58,48,-4,-5,53,-3,-2};
+static const int defaultActions[12]={49,14,56,6,59,58,48,-4,-5,53,-3,-2};
 static bool held[128];
 static bool mouseHeld[3];
 static void applyOutput(const bool next[128],const bool mouse[3]) {
@@ -180,7 +180,7 @@ static void *readController(void *unused) {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidEndTrackingNotification object:self.item.menu];
   NSMenu *m=[NSMenu new];m.delegate=self;self.stateItem=[[NSMenuItem alloc] initWithTitle:L(@"Connecting…",@"Povezivanje…") action:nil keyEquivalent:@""];[m addItem:self.stateItem];
   [m addItem:[NSMenuItem separatorItem]];
-  for(NSString *title in @[L(@"Left stick → WASD · D-pad disabled",@"Levi stik → WASD · D-pad isključen"),L(@"Right stick → mouse / camera",@"Desni stik → miš / kamera"),L(@"A → ↑ (jump)",@"A → ↑ (skok)"),L(@"X → Shift (boost / dash) · RT → left click",@"X → Shift (boost / dash) · RT → levi klik"),L(@"B → E (interact)",@"B → E (interakcija)"),L(@"Y → Z (skip) · R3 → middle click",@"Y → Z (preskakanje) · R3 → srednji klik"),L(@"Menu → pause / pointer · View → pointer on/off",@"Menu → pauza / pokazivač · View → pokazivač uklj./isklj.")]) [m addItem:[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""]];
+  for(NSString *title in @[L(@"Left stick → WASD",@"Levi stik → WASD"),L(@"Right stick → mouse / camera",@"Desni stik → miš / kamera"),L(@"A → Space (jump)",@"A → Space (skok)"),L(@"X → Shift (boost / dash) · RT → left click",@"X → Shift (boost / dash) · RT → levi klik"),L(@"B → E (interact)",@"B → E (interakcija)"),L(@"Y → Z (skip) · R3 → middle click",@"Y → Z (preskakanje) · R3 → srednji klik"),L(@"Menu → pause / pointer · View → pointer on/off",@"Menu → pauza / pokazivač · View → pokazivač uklj./isklj.")]) [m addItem:[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""]];
   self.actionMenus=[NSMutableArray new];
   NSMenuItem *custom=[[NSMenuItem alloc] initWithTitle:L(@"Button mapping",@"Podesi dugmad") action:nil keyEquivalent:@""];NSMenu *customMenu=[NSMenu new];custom.submenu=customMenu;[m addItem:custom];
   NSArray *labels=@[@"A",@"B",@"X",@"Y",@"LB",@"RB",@"L3",@"R3",@"View",@"Menu",@"LT",@"RT"];
@@ -263,15 +263,15 @@ int main(int argc,const char *argv[]) {
   if(argc>1&&!strcmp(argv[1],"--self-test")) {
     assert(axisSpeed(0)==0);assert(axisSpeed(6000)==0);assert(axisSpeed(32767)>0.99);assert(axisSpeed(-32768)==-1);
     bool keys[128]={0},mouse[3]={0};mapState(0x10|0x40,20000,20000,0,0,keys,mouse);
-    assert(keys[126]&&!keys[49]&&!mouse[0]&&keys[56]&&keys[2]&&keys[13]&&!keys[123]&&!keys[124]);
+    assert(keys[49]&&!keys[126]&&!mouse[0]&&keys[56]&&keys[2]&&keys[13]&&!keys[123]&&!keys[124]);
     memset(keys,0,sizeof keys);mapState(0x400,-20000,-20000,1000,1000,keys,mouse);assert(keys[0]&&keys[1]&&!keys[123]&&!keys[56]&&mouse[0]&&mouse[1]);
     memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x20|0x04|0x08,0,0,0,0,keys,mouse);assert(keys[14]&&keys[53]&&!keys[36]&&!keys[56]);
     memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x80|0x8000,0,0,0,0,keys,mouse);assert(keys[6]&&mouse[2]);
-    atomic_store(&navigationMode,true);memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x10|0x20,0,0,0,0,keys,mouse);assert(keys[126]&&keys[14]&&!keys[36]&&!keys[53]&&!keys[49]);
-    atomic_store(&action[0],49);memset(keys,0,sizeof keys);mapState(0x10,0,0,0,0,keys,mouse);assert(keys[49]&&!keys[36]&&!keys[126]);atomic_store(&action[0],126);atomic_store(&navigationMode,false);
+    atomic_store(&navigationMode,true);memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x10|0x20,0,0,0,0,keys,mouse);assert(keys[49]&&keys[14]&&!keys[36]&&!keys[53]&&!keys[126]);
+    atomic_store(&action[0],126);memset(keys,0,sizeof keys);mapState(0x10,0,0,0,0,keys,mouse);assert(keys[126]&&!keys[36]&&!keys[49]);atomic_store(&action[0],49);atomic_store(&navigationMode,false);
     memset(keys,0,sizeof keys);memset(mouse,0,sizeof mouse);mapState(0x100|0x200|0x400|0x800,0,0,0,0,keys,mouse);
     for(int i=0;i<128;i++)assert(!keys[i]);for(int i=0;i<3;i++)assert(!mouse[i]);
-    puts("PASS: WASD, A up-arrow jump, dash, disabled D-pad, triggers, menu controls and camera axes");return 0;
+    puts("PASS: WASD, A Space jump, dash, disabled D-pad, triggers, menu controls and camera axes");return 0;
   }
   @autoreleasepool {
     NSUserDefaults *prefs=NSUserDefaults.standardUserDefaults;

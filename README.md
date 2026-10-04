@@ -1,4 +1,4 @@
-# Sonic Controller for macOS
+# Sonic Dream Team Controller
 
 A small macOS menu bar app that makes a tested Xbox-style 2.4 GHz USB controller
 usable with **Sonic Dream Team** by translating controller input into keyboard
@@ -52,13 +52,13 @@ Install [Homebrew](https://brew.sh/) if needed, then the dependencies:
 
 ```sh
 brew install libusb pkgconf
-git clone https://github.com/filiprrs/sonic-controller-macos.git
-cd sonic-controller-macos
+git clone https://github.com/filiprrs/sonic-dream-team-controller-macos.git
+cd sonic-dream-team-controller-macos
 make
 make test
 ```
 
-The output is **`build/SonicController.app`**. The Makefile finds libusb through
+The output is **`build/SonicDreamTeamController.app`**. The Makefile finds libusb through
 `pkg-config`, so it does not assume `/usr/local` or `/opt/homebrew`. It builds for
 the current machine's architecture and ad-hoc signs the app. No Developer ID,
 paid Apple developer account, or `sudo` is needed to build or run the bridge.
@@ -74,9 +74,9 @@ does not connect to hardware, launch the game, or verify Accessibility permissio
    the receiver into pairing mode with its button, then hold the controller's
    HOME button for about one second. Both lights should become steady. Other
    models may have different pairing instructions.
-2. Open `build/SonicController.app` in Finder. A **🎮 Sonic** item appears in
+2. Open `build/SonicDreamTeamController.app` in Finder. A **🎮 Sonic** item appears in
    the menu bar; the app has no Dock window.
-3. Use **Allow keyboard and mouse control…**, then enable **Sonic Controller**
+3. Use **Allow keyboard and mouse control…**, then enable **Sonic Dream Team Controller**
    under **System Settings → Privacy & Security → Accessibility**.
 4. Open Sonic Dream Team and check the controller during gameplay. The menu bar
    status shows whether the app is waiting for USB, needs permission, or is ready.
@@ -87,14 +87,13 @@ approval flow. No security settings need to be disabled.
 
 ## Default controls
 
-These bindings reflect the tested setup, rather than a universal keyboard preset.
-Use **Button mapping** to adapt them to your game version.
+Use **Button mapping** to customize the controls.
 
 | Controller | Output / behavior |
 | --- | --- |
 | Left stick | W / A / S / D |
 | Right stick | Mouse movement / camera |
-| A | Up arrow (`↑`), used for jump in the tested setup |
+| A | Space, jump / homing attack |
 | X | Left Shift, boost / dash binding |
 | B | E, interaction binding |
 | Y | Z, skip binding |
@@ -106,17 +105,12 @@ Use **Button mapping** to adapt them to your game version.
 | RB | Option |
 | Menu | Escape / pause, and toggles the visible menu pointer |
 | View | Toggles the visible menu pointer without sending a game key |
-| D-pad | Disabled |
 
 LB, RB, L3, and LT are configurable convenience bindings; their gameplay effects
-have not been confirmed. A is intentionally mapped to `↑`, not Space. The D-pad
-does not emit arrow keys.
+have not been confirmed.
 
-Showing the pointer does not change any button bindings: A still sends the
-configured jump key, B still sends its configured action, and RT clicks the
-pointed item. Press View when the game opens a menu by itself, for example after
-finishing a level. Press View again to hide the pointer. The cursor overlay does
-not intercept clicks.
+Press View to show or hide the pointer, including when the game opens a menu
+after finishing a level. Move it with the right stick and click with RT.
 
 Camera / pointer sensitivity is **shared** between gameplay and menus:
 Slow (350), Normal (900, default), or Fast (1600 pixels/second at full deflection).
@@ -142,7 +136,7 @@ The app cannot automatically detect every in-game menu transition.
 
 **Wrong jump or other action:** check what a real keyboard does in your game
 setup, then change **Button mapping**. The default bindings are not verified
-across all game versions. D-pad behavior is intentionally disabled in source.
+across all game versions.
 
 **Different receiver:** inspect its USB vendor/product IDs in System Information
 or with `system_profiler SPUSBDataType`. If it uses the same GIP protocol, an
@@ -167,7 +161,7 @@ with at least 18 bytes, and initializes the receiver with power, LED, and auth
 messages. Focus detection checks `com.sega.sdt` and the normalized app name.
 
 Settings and local USB/input counters use macOS preferences for
-`io.github.filiprrs.sonic-controller-macos`. The app sends no telemetry and
+`io.github.filiprrs.sonic-dream-team-controller-macos`. The app sends no telemetry and
 makes no network requests. USB access and input posting happen locally.
 
 For a compatibility report, include the controller model, receiver VID/PID,
