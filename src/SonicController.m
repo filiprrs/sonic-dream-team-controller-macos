@@ -59,7 +59,7 @@ static void applyOutput(const bool next[128],const bool mouse[3]) {
     CGEventRef pos=CGEventCreate(NULL);CGPoint p=pos?CGEventGetLocation(pos):CGPointZero;if(pos)CFRelease(pos);
     CGEventType down[]={kCGEventLeftMouseDown,kCGEventRightMouseDown,kCGEventOtherMouseDown};
     CGEventType up[]={kCGEventLeftMouseUp,kCGEventRightMouseUp,kCGEventOtherMouseUp};
-    CGEventRef e=CGEventCreateMouseEvent(mouseSource,mouse[i]?down[i]:up[i],p,(CGMouseButton)i);
+    CGEventRef e=CGEventCreateMouseEvent(atomic_load(&navigationMode)?mouseSource:NULL,mouse[i]?down[i]:up[i],p,(CGMouseButton)i);
     if(e){CGEventPost(kCGHIDEventTap,e);atomic_fetch_add(&postedEvents,1);CFRelease(e);}mouseHeld[i]=mouse[i];
   }
 }
@@ -78,7 +78,8 @@ static void moveMouse(int x,int y,double dt) {
   if(atomic_load(&navigationMode)){p=clampPointer(p);CGWarpMouseCursorPosition(p);}
   CGEventType type=mouseHeld[0]?kCGEventLeftMouseDragged:mouseHeld[1]?kCGEventRightMouseDragged:mouseHeld[2]?kCGEventOtherMouseDragged:kCGEventMouseMoved;
   CGMouseButton button=mouseHeld[1]?kCGMouseButtonRight:mouseHeld[2]?kCGMouseButtonCenter:kCGMouseButtonLeft;
-  CGEventRef e=CGEventCreateMouseEvent(mouseSource,type,p,button);
+  // Preserve the original gameplay event source; HID source is only for the visible pointer.
+  CGEventRef e=CGEventCreateMouseEvent(atomic_load(&navigationMode)?mouseSource:NULL,type,p,button);
   if(e){CGEventSetIntegerValueField(e,kCGMouseEventDeltaX,dx);CGEventSetIntegerValueField(e,kCGMouseEventDeltaY,dy);CGEventPost(kCGHIDEventTap,e);CFRelease(e);}
 }
 static void bindAction(int idx,bool active,bool keys[128],bool mouse[3]) {
