@@ -1,5 +1,7 @@
 # Sonic Dream Team Controller
 
+*Built with generous amounts of AI-generated slop*
+
 A small macOS menu bar app that makes a tested Xbox-style 2.4 GHz USB controller
 usable with **Sonic Dream Team** by translating controller input into keyboard
 and mouse events.
